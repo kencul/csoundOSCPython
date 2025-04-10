@@ -14,12 +14,12 @@ import numpy as np
 import ctcsound
 
 # parse arguments
-# if len(sys.argv) != 3:
-#     print("Usage: python osc_handler.py <ip> <port>")
-#     sys.exit(1)
+if len(sys.argv) != 3:
+    print("Usage: python osc_handler.py <ip> <port>")
+    sys.exit(1)
 
-# ip = sys.argv[1]
-# port = sys.argv[2]
+ip = sys.argv[1]
+port = sys.argv[2]
 
 
 # REF: (csound python docs)[https://github.com/csound/ctcsound/blob/master/cookbook/02-performing.ipynb]
@@ -112,11 +112,11 @@ async def main():
         print("Exit complete")
 
 
-#asyncio.run(main())
+asyncio.run(main())
 
 # # if script is run direclty (not imported as a library), run loop
-if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        pass  # Already handled by asyncio.CancelledError
+# if __name__ == "__main__":
+#     try:
+#         asyncio.run(main())
+#     except KeyboardInterrupt:
+#         pass  # Already handled by asyncio.CancelledError
