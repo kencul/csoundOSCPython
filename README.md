@@ -10,9 +10,12 @@ source env/bin/activate  # (Mac/Linux)
 .\env\Scripts\activate # (Windows)
 ~~~
 
-Install dependencies:
+### Install dependencies:
 ~~~
 pip install -r requirements.txt
 ~~~
 
-Copy `ctcsound.py` file from csound installation (csound/bin/ctcsound.py) into `/env/Lib/site-packages`
+Copy `ctcsound.py` file from csound installation (csound/bin/ctcsound.py) into `/env/Lib/site-packages`.  
+**EXAMPLES USE CSOUND7: PLEASE BUILD FROM THE DEVELOPMENT BRANCH FROM THE CSOUND GITHUB**
+
+Download `MikTeX` from their [website](https://miktex.org/download) for typeset support in `manim`
