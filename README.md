@@ -19,3 +19,5 @@ Copy `ctcsound.py` file from csound installation (csound/bin/ctcsound.py) into `
 **EXAMPLES USE CSOUND7: PLEASE BUILD FROM THE DEVELOPMENT BRANCH FROM THE CSOUND GITHUB**
 
 Download `MikTeX` from their [website](https://miktex.org/download) for typeset support in `manim`
+
+Download `ffmpeg` from this [website](https://www.gyan.dev/ffmpeg/builds/) for video output from `manim`
