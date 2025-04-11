@@ -1,4 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:C:/Users/Ken/Documents/GitHub/pyCsoundOSC/src/manim/test/media/videos/main/1080p30/partial_movie_files/DefaultTemplate/3445125925_1055451330_223132457.mp4'
-file 'file:C:/Users/Ken/Documents/GitHub/pyCsoundOSC/src/manim/test/media/videos/main/1080p30/partial_movie_files/DefaultTemplate/1025971384_3458699136_809182053.mp4'
-file 'file:C:/Users/Ken/Documents/GitHub/pyCsoundOSC/src/manim/test/media/videos/main/1080p30/partial_movie_files/DefaultTemplate/1025971384_70379811_809182053.mp4'
