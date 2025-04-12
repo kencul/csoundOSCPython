@@ -12,7 +12,7 @@ def lorenz_system(t, state, sigma=10, rho=28, beta=8 / 3):
     return [dxdt, dydt, dzdt]
 
 
-def ode_solution_points(function, state0, time, dt=0.01):
+def ode_solution_points(function, state0, time, dt=0.005):
     solution = solve_ivp(
         function,
         t_span=(0, time),
@@ -67,12 +67,12 @@ class LorenzAttractor(ThreeDScene):
         # # Compute a set of solutions
         epsilon = 1e-5
         evolution_time = 30
-        n_points = 1
+        n_points = 10
         states = [
             [10, 10, 10 + n * epsilon]
             for n in range(n_points)
         ]
-        colors = color_gradient([PURPLE_A, BLUE_A], len(states)) # gradient color of each state
+        colors = color_gradient([PURPLE_E, BLUE_E], len(states)) # gradient color of each state
 
         # save point values to send to csound
         all_trajectories = []
@@ -86,7 +86,7 @@ class LorenzAttractor(ThreeDScene):
             curve.set_stroke(color, 1, opacity=0.25)
             curves.add(curve)
         
-        self.generateAudio(all_trajectories, "output.wav", evolution_time)
+        self.generateAudio(all_trajectories, "assets/output.wav", evolution_time)
 
         curves.set_stroke(width=2, opacity=1)
 
@@ -119,10 +119,11 @@ class LorenzAttractor(ThreeDScene):
     # CSOUND AUDIO OUTPUT
     def generateAudio(self, all_points, outputFile, evoTime):
         cs = ctcsound.Csound()
+        numVoices = len(all_points)
         csd = f'''
         <CsoundSynthesizer>
         <CsOptions>
-        -ooutput.wav -W
+        -o{outputFile} -W
         </CsOptions>
         <CsInstruments>
         sr = 44100
@@ -131,33 +132,57 @@ class LorenzAttractor(ThreeDScene):
         0dbfs = 1
         seed 0
 
-        gkx[] init 10
-        gky[] init 10
-        gkz[] init 10
+        gknumVoices init 0
+        gkx[] init {numVoices}
+        gky[] init {numVoices}
+        gkz[] init {numVoices}
 
+        instr 3
+        gknumVoices = p4
+        endin
+        
         instr 1
         ; Convert point data to audio parameters
-        gkx[p4] = port:k(p5, 0.01, -1)
-        gky[p4] = port:k(p6, 0.01, -1)
-        gkz[p4] = port:k(p7, 0.01, -1)
+        gkx[p4] = p5 ;port:k(p5, 0.01, -1)
+        gky[p4] = p6 ;port:k(p6, 0.01, -1)
+        gkz[p4] = p7 ;port:k(p7, 0.01, -1)
         endin
 
         instr 2
         ; Map coordinates to frequency (x), amplitude (y), and filter (z)
-        kfreq = gkz[p4] * 440 * 5
-        kamp = abs(gky[p4])/2 + 0.5
-        kcutoff = abs(gkx[p4]) * 22000
+        kfreq = portk:k(gkz[p4], 0.01) * 440 * 5
+        
+        // avoid divide by 0 when theres only one voice
+        if (gknumVoices == 1) then
+        kamp = abs(portk:k(gky[p4], 0.01))/2 + 0.5
+        else
+        kamp = (abs(portk:k(gky[p4], 0.01))/2 + 0.5) / gknumVoices
+        endif
+        
+        kcutoff = abs(portk:k(gkx[p4], 0.01)) * 22000
         
         ; Generate sound
         asig = vco2(kamp, kfreq)
         asig = moogladder(asig, kcutoff, 0.5)
-        outs asig, asig
+        
+        if (gknumVoices == 1) then
+        asigL = asig
+        asigR = asig
+        else
+        asigL, asigR = pan2(asig, p4/(gknumVoices - 1))
+        endif
+        
+        outs asigL, asigR
         endin
-
         </CsInstruments>
         <CsScore>
-        i2 0 31 0
         '''
+        
+        
+        csd += f"i3 0 1 {numVoices}\n"
+        
+        for i in range(numVoices):
+            csd += f"i2.{i} 0 {evoTime+1} {i}\n"
         
         # Calculate time step between points
         dt = evoTime / len(all_points[0])
@@ -171,12 +196,12 @@ class LorenzAttractor(ThreeDScene):
                 scaled_x = x / 50.0
                 scaled_y = y / 50.0
                 scaled_z = z / 50.0
-                        #   time     len  pnt# x-val      y-val       z-val
-                csd += f"i1 {t*dt+1} {dt} {i} {scaled_x} {scaled_y} {scaled_z}\n"
+                        #        time     len  pnt# x-val      y-val       z-val
+                csd += f"i1.{i} {t*dt+1} {dt} {i} {scaled_x} {scaled_y} {scaled_z}\n"
         
-        csd += f"e {evoTime}\n"
+        csd += f"e {evoTime+1}\n"
         csd += "</CsScore>\n</CsoundSynthesizer>"
-        with open("lorenz.csd", "w") as f:
+        with open("assets/lorenz.csd", "w") as f:
             f.write(csd)
         
         # Compile and render Csound
