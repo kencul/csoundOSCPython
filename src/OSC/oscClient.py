@@ -1,6 +1,6 @@
 from pythonosc.udp_client import SimpleUDPClient
 
-ip = "149.157.186.196"
+ip = "YOUR IP"
 port = 8000
 
 client = SimpleUDPClient(ip, port)  # Create client

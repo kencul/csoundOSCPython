@@ -14,62 +14,9 @@ from pythonosc.osc_server import AsyncIOOSCUDPServer
 import numpy as np
 import ctcsound
 
-# parse arguments
-# if len(sys.argv) != 3:
-#     print("Usage: python osc_handler.py <ip> <port>")
-#     sys.exit(1)
-
-# ip = sys.argv[1]
-# port = sys.argv[2]
-
-
 # REF: (csound python docs)[https://github.com/csound/ctcsound/blob/master/cookbook/02-performing.ipynb]
 cs = ctcsound.Csound()
-csd = '''
-<CsoundSynthesizer>
-<CsOptions>
--odac
-</CsOptions>
-<CsInstruments>
-sr = 44100
-ksmps = 64
-nchnls = 2
-0dbfs = 1
-seed 0
-
-instr 1
- iPch random 60, 72
- chnset iPch, "pch"
- kPch init iPch
- 
- kX chnget "x"
- if kX > 0 then
-  kWavetable = portk(kX, 0.1)
- endif
- 
- kVib init 0
- kNewVib chnget "vib"
- if kNewVib > 0 then
-    kVib = portk(kNewVib, 0.1)
- endif
- 
- kLFO poscil kVib, kVib* 10
- kModPitch = mtof(iPch) + (kLFO * mtof(iPch) * 0.5)
- aTone poscil .2, kModPitch
- aSaw vco2 .2, kModPitch
- aOut = aTone * (1-kWavetable) + aSaw * (kWavetable)
- aOutL, aOutR = pan2(aOut, kLFO/2*kVib + 0.5)
- out aOutL, aOutR
-endin
-
-</CsInstruments>
-<CsScore>
-i 1 0 60000
-</CsScore>
-</CsoundSynthesizer>
-'''
-
-cs.compile_csd(csd, 1)
+cs.compile_csd("osc.csd", 0)
 
 
 # function that returns device's LAN IP (REF: deepseek)
@@ -89,7 +36,7 @@ def get_local_ip():
 
 # Handler functions for OSC message addresses
 def xGyroHandler(address, *args):
-    #print(f"{address}: {args}") 
+    # print(f"{address}: {args}") 
     
     val = abs(args[0]) * 0.1
     
