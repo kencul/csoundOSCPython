@@ -8,6 +8,11 @@ Run [`oscServer.py`](oscServer.py):
 python oscServer.py
 ```
 
+Change active directory to the `OSC/` directory
+```
+cd src/OSC/
+```
+
 The script will detect your device IP automatically, and prompt to start the osc server.  
 Change the port by changing the variable value in `oscServer.py` line 127  
 Press enter to start the server.

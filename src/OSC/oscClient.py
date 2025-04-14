@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from pythonosc.udp_client import SimpleUDPClient
 
 ip = "YOUR IP"

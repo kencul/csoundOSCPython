@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # REF: (pythonOSC docs)[https://python-osc.readthedocs.io/en/latest/server.html]
 
 # FOR USE WITH "DATAOSC" IOS APP
@@ -102,6 +103,7 @@ async def main():
         print("\nShutdown signal received...")
     finally:
         print("Cleaning up...")
+        cs.event_string('e 0')
         transport.close()  # Stop OSC server
         pt.stop()         # Stop Csound
         pt.join()        # Wait for Csound to finish
