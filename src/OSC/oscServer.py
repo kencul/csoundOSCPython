@@ -34,7 +34,7 @@ def get_local_ip():
 
 
 # Handler functions for OSC message addresses
-def xGyroHandler(address, *args):
+def xGyroHandler(_, *args):
     # print(f"{address}: {args}") 
     
     val = abs(args[0]) * 0.1
@@ -45,7 +45,7 @@ def xGyroHandler(address, *args):
     
     cs.set_control_channel('x', val)
     
-def yGyroHandler(address, *args):
+def yGyroHandler(_, *args):
     #print(f"{address}: {args}") 
     val = abs(args[0]) * 0.1
     
