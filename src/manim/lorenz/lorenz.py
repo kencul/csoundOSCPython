@@ -1,7 +1,6 @@
 from manim import *
 from scipy.integrate import solve_ivp
 
-
 def lorenz_system(t, state, sigma=10, rho=28, beta=8 / 3):
     x, y, z = state
     dxdt = sigma * (y - x)
@@ -10,7 +9,7 @@ def lorenz_system(t, state, sigma=10, rho=28, beta=8 / 3):
     return [dxdt, dydt, dzdt]
 
 
-def ode_solution_points(function, state0, time, dt=0.005):
+def ode_solution_points(function, state0, time, dt=0.01):
     solution = solve_ivp(
         function,
         t_span=(0, time),
@@ -18,13 +17,6 @@ def ode_solution_points(function, state0, time, dt=0.005):
         t_eval=np.arange(0, time, dt)
     )
     return solution.y.T
-
-
-# def for_later():
-#     tail = VGroup(
-#         TracingTail(dot, time_traced=3).match_color(dot)
-#         for dot in dots
-#     )
 
 
 class LorenzAttractor(ThreeDScene):

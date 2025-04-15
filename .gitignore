@@ -8,3 +8,4 @@ media/
 *.mp4
 *.wav
 assets/
+src/opencv/img/
