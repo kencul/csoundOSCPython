@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+from pathlib import Path
 
 import copy
 
@@ -7,29 +8,30 @@ import copy
 def nothing(x):
     pass
 
-path = "henri_matisse.jpg"
+base_dir = Path(__file__).parent  # Script's directory
+img_dir = base_dir / "imgs"
+img_paths = [
+    img_dir / "still_life.jpg",
+    img_dir / "still_life2.jpg",
+    img_dir / "starrynight.jpg"
+]
+
+imgPath = img_paths[2]
 
 # Reading an image in default mode
-image = cv.imread(path)
-window_name = "image"
-
-# returns (rows, columns, channels)
-# rows, columns, channels = image.shape
-
-# Split rgb channels of img
-# b, g, r = cv.split(image)
-
-# Change to grayscale and apply threshold
-# imggray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-# ret, mask = cv.threshold(imggray, 70, 255, cv.THRESH_BINARY)
-
-
-cv.namedWindow("sliders")
-# cv.createTrackbar('Threshold',"sliders",0,255,nothing)
-cv.createTrackbar('Channel',"sliders",0,3,nothing)
+image = cv.imread(str(imgPath.absolute()))
+imgfiltered = copy.deepcopy(image)
+# Initialize windows with proper flags
+cv.namedWindow("sliders", cv.WINDOW_NORMAL | cv.WINDOW_GUI_EXPANDED)
+cv.namedWindow("window_name", cv.WINDOW_NORMAL | cv.WINDOW_GUI_EXPANDED)
+cv.createTrackbar('Channels', "sliders", 0, 3, nothing)
 
 channelPrev = -1
 while(1):
+    # Display images first
+    cv.imshow("window_name", imgfiltered)
+    cv.imshow("sliders", np.zeros((100, 400, 3), dtype=np.uint8))  # Dummy image for slider window
+
     # break out if escape key is pressed
     k = cv.waitKey(1) & 0xFF
     if k == 27:
@@ -37,7 +39,7 @@ while(1):
     
     
     # threshold = cv.getTrackbarPos('Threshold', 'sliders')
-    channel = cv.getTrackbarPos('Channel', 'sliders')
+    channel = cv.getTrackbarPos('Channels', 'sliders')
     
     # if new color channel is selected
     if channel != channelPrev:
@@ -62,5 +64,5 @@ while(1):
             
     #ret, mask = cv.threshold(imgfiltered, threshold, 255, cv.THRESH_BINARY)
     
-    cv.imshow("window_name", imgfiltered)
+    #cv.imshow("window_name", imgfiltered)
 cv.destroyAllWindows()

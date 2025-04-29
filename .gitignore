@@ -9,3 +9,5 @@ media/
 *.wav
 assets/
 src/opencv/img/
+src/opencv/imgs/
+test.aif

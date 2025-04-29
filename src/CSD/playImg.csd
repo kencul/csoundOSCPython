@@ -1,6 +1,6 @@
 <CsoundSynthesizer>
 <CsOptions>
--odac
+-odac --nodisplays
 </CsOptions>
 <CsInstruments>
 sr = 44100
@@ -166,7 +166,6 @@ f19  0  16    2    1   7   10  7   6   5   4   2   1   1  1  1  1  1  1  1
 f20  0  16   -2    0   30  40  45  50  40  30  20  10  5  4  3  2  1  0  0  0
 f21  0  16   -2    0   20  15  10  9   8   7   6   5   4  3  2  1  0  0
 f22  0  9    -2   .001 .004 .007 .003 .002 .005 .009 .006
-f66      0 0 1 "src/opencv/Vo_main.wav" 0 0 0
 
 i 98 0 36000
 i 99 0 36000 1

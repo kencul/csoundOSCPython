@@ -7,15 +7,19 @@ import random
 from datetime import datetime
 random.seed(datetime.now().timestamp())
 
+from pathlib import Path
+
 import ctcsound
 import sys
+import os
 
 # Csound init
 cs = ctcsound.Csound()
-csd = "src\CSD\playImg.csd"
+csd = Path("src/CSD/playImg.csd")
 
-# Compile csd
-result = cs.compile_csd(csd, 0)
+# Convert to absolute path (recommended for reliability) and then to string
+result = cs.compile_csd(str(csd.absolute()), 0)
+
 if result != ctcsound.CSOUND_SUCCESS:
     print(f"Error compiling csd!", file=sys.stderr)
     sys.exit(1)
@@ -71,7 +75,7 @@ def analyzeSquare(square):
 
 def create_feature_window(features, window_name="Features"):
     """Creates a feature display with guaranteed color swatches"""
-    feature_display = np.zeros((600, 700, 3), dtype=np.uint8)
+    feature_display = np.zeros((450, 700, 3), dtype=np.uint8)
     y_offset = 60  # Starting Y position
 
     # Ensure consistent key names (match your analyze_square() output)
@@ -112,14 +116,38 @@ def hueToInstr(hue, numInstruments):
     instrIndex = int(hueScale * numInstruments) # floor rounding to instrument number
     return min(instrIndex, instrIndex) # clamp to highest instr number
 
-imgPaths = ["src\opencv\img\henri_matisse.jpg", "src\opencv\img\starrynight.jpg"]
-imgPath = imgPaths[0]
+# ---------------------------------------------------------------------
+# Finding image files + init image
+
+base_dir = Path(__file__).parent  # Script's directory
+img_dir = base_dir / "imgs"
+
+# # Supported image extensions
+# image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp')
+
+
+# # Find all image files in the directory
+# image_files = [os.path.join(img_dir, f) for f in os.listdir(img_dir) 
+#               if os.path.isfile(os.path.join(img_dir, f)) and f.lower().endswith(image_extensions)]
+
+img_paths = [
+    img_dir / "still_life.jpg", # henri matisse
+    img_dir / "still_life2.jpg",
+    img_dir / "starrynight.jpg"
+]
+
+# Verify files exist
+for path in img_paths:
+    if not path.exists():
+        raise FileNotFoundError(f"Image not found: {path}")
+
+imgPath = img_paths[0]
 windowName = "image"
 
 rowDiv = 20
 colDiv = 20
 
-image = cv.imread(imgPath)
+image = cv.imread(str(imgPath.absolute()))
 assert image is not None, "file could not be read, check with os.path.exists()"
 rows, columns, channels = image.shape
 
@@ -133,15 +161,15 @@ yCoord = random.randrange(0, rowDiv)
 # PERFORMANCE INITS
 noteLength = 10
 amp = 0.2
-noteOverlap = 0.8
-numInstr = 2
+noteOverlap = 1.2
+numInstr = 4
 
 while 1:
     outImg = copy.deepcopy(image)
     square = image[yCoord*roiLength:(yCoord+1)*roiLength, xCoord*roiWidth:(xCoord+1)*roiWidth]
     features = analyzeSquare(square)
     
-    cv.rectangle(outImg,(xCoord * roiWidth,yCoord * roiLength),((xCoord+1) * roiWidth, (yCoord+1) * roiLength),(0,255,0),2)
+    cv.rectangle(outImg,(xCoord * roiWidth,yCoord * roiLength),((xCoord+1) * roiWidth, (yCoord+1) * roiLength),(0,0,255),3)
     
     # # end process when end of picture is reached
     # if yCoord == rowDiv:
@@ -162,7 +190,8 @@ while 1:
     
     
     # Play note in csound
-    randInstr = hueToInstr(features['avg_hsv'][0], numInstr) + 1
+    randInstr = hueToInstr(features['avg_hsv'][0], numInstr)
+    randInstr = (randInstr * 7) % numInstr + 1
     msg = f"i{randInstr} 0 {noteLength * noteOverlap} {features['brightness']} {features['dominant_color_hsv'][0]/255} {amp} {features['contrast']}"
     # print(msg)
     cs.event_string(msg)

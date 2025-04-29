@@ -6,6 +6,8 @@ import time
 import sys
 import socket
 
+from pathlib import Path
+
 import asyncio
 
 from pythonosc.dispatcher import Dispatcher
@@ -15,7 +17,13 @@ import ctcsound
 
 # REF: (csound python docs)[https://github.com/csound/ctcsound/blob/master/cookbook/02-performing.ipynb]
 cs = ctcsound.Csound()
-cs.compile_csd("osc.csd", 0)
+base_dir = Path(__file__).parent  # Script's directory
+csd_dir = base_dir / "osc.csd"
+result = cs.compile_csd(str(csd_dir.absolute()), 0)
+
+if result is not ctcsound.CSOUND_SUCCESS:
+    print("Failed to compile csd!")
+    exit()
 
 
 # function that returns device's LAN IP (REF: deepseek)

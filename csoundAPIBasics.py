@@ -1,3 +1,4 @@
+# Step 0: install ctcsound
 import ctcsound
 import sys
 
