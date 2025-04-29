@@ -3,6 +3,7 @@ import numpy as np
 from pathlib import Path
 
 import copy
+import random
 
 
 def nothing(x):
@@ -10,13 +11,20 @@ def nothing(x):
 
 base_dir = Path(__file__).parent  # Script's directory
 img_dir = base_dir / "imgs"
-img_paths = [
-    img_dir / "still_life.jpg",
-    img_dir / "still_life2.jpg",
-    img_dir / "starrynight.jpg"
-]
 
-imgPath = img_paths[2]
+# Supported image extensions
+image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp')
+
+
+# Find all image files in the directory
+img_paths = [f for f in img_dir.iterdir() 
+            if f.is_file() and f.suffix.lower() in image_extensions]
+
+if not img_paths:
+    raise FileNotFoundError(f"No image files found in {img_dir}")
+
+# Select random image
+imgPath = random.choice(img_paths)
 
 # Reading an image in default mode
 image = cv.imread(str(imgPath.absolute()))

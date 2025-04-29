@@ -1,6 +1,6 @@
 <CsoundSynthesizer>
 <CsOptions>
--odac --nodisplays
+-odac --nodisplays -m 128
 </CsOptions>
 <CsInstruments>
 sr = 44100

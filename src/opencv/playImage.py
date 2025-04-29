@@ -13,6 +13,14 @@ import ctcsound
 import sys
 import os
 
+# ------------------------------------------------------------------------
+# PERFORMANCE INITS
+noteLength = 7
+amp = 0.2
+noteOverlap = 1.5
+numInstr = 4
+
+# ------------------------------------------------------------------------
 # Csound init
 cs = ctcsound.Csound()
 csd = Path("src/CSD/playImg.csd")
@@ -122,26 +130,21 @@ def hueToInstr(hue, numInstruments):
 base_dir = Path(__file__).parent  # Script's directory
 img_dir = base_dir / "imgs"
 
-# # Supported image extensions
-# image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp')
+# Supported image extensions
+image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp')
 
 
-# # Find all image files in the directory
-# image_files = [os.path.join(img_dir, f) for f in os.listdir(img_dir) 
-#               if os.path.isfile(os.path.join(img_dir, f)) and f.lower().endswith(image_extensions)]
+# Find all image files in the directory
+img_paths = [f for f in img_dir.iterdir() 
+            if f.is_file() and f.suffix.lower() in image_extensions]
 
-img_paths = [
-    img_dir / "still_life.jpg", # henri matisse
-    img_dir / "still_life2.jpg",
-    img_dir / "starrynight.jpg"
-]
+if not img_paths:
+    raise FileNotFoundError(f"No image files found in {img_dir}")
 
-# Verify files exist
-for path in img_paths:
-    if not path.exists():
-        raise FileNotFoundError(f"Image not found: {path}")
+# Select random image
+imgPath = random.choice(img_paths)
+print(f"Playing imageL: {imgPath}")
 
-imgPath = img_paths[0]
 windowName = "image"
 
 rowDiv = 20
@@ -157,12 +160,6 @@ roiLength = (int)(rows / rowDiv)
 xCoord = random.randrange(0, colDiv)
 yCoord = random.randrange(0, rowDiv)
 
-# ------------------------------------------------------------------------
-# PERFORMANCE INITS
-noteLength = 10
-amp = 0.2
-noteOverlap = 1.2
-numInstr = 4
 
 while 1:
     outImg = copy.deepcopy(image)

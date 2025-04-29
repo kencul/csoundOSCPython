@@ -8,6 +8,5 @@ media/
 *.mp4
 *.wav
 assets/
-src/opencv/img/
-src/opencv/imgs/
+src/opencv/imgs/*
 test.aif
